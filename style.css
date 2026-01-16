@@ -1,8 +1,7 @@
-/* 1. THE FOUNDATION */
 body { 
     background-color: #0b0e14; /* Deep space black */
     color: #00ffcc; /* Neon robotic teal */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     display: flex; 
     flex-direction: column; 
     height: 100vh; 

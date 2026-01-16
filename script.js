@@ -1,24 +1,5 @@
-import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+const API_KEY = "AIzaSyCutWOFETQ_8C18OXKSU6e0ki-JnlyIpL8"; // Put your new key here
 
-// 1. YOUR API KEY (Get this from Google AI Studio)
-const API_KEY = "AIzaSyCy6h14m4CE6wXYHsitF3XtWepI11S-vBU"; 
-const genAI = new GoogleGenerativeAI(API_KEY);
-
-// 2. THE SYSTEM BRAIN (The instructions the user never sees)
-const model = genAI.getGenerativeModel({ 
-    model: "gemini-1.5-flash",
-    systemInstruction: `You are LISA (LBS Institute Student Assistant).
-    - Location: LBSITW, Poojappura, Thiruvananthapuram.
-    - Personality: Helpful, robotic but friendly, and very knowledgeable about the campus.
-    - Key Knowledge: 
-        * The Main Block houses the Administrative office.
-        * The Workshop is near the back entrance.
-        * The Canteen is famous for its snacks.
-        * Departments include CSE, ECE, IT, CE, and ME.
-    - Rules: If you don't know a specific room number, tell the student to check the notice board near the security desk. Always use emojis like 🤖, 📍, or 📚.`
-});
-
-// 3. THE FUNCTION THAT RUNS WHEN YOU CLICK 'QUERY'
 window.sendMessage = async function() {
     const inputField = document.getElementById('userInput');
     const container = document.getElementById('chat-container');
@@ -26,39 +7,56 @@ window.sendMessage = async function() {
     
     if (!userText.trim()) return;
 
-    // Add User Message to screen
+    // 1. Show User Message
     container.innerHTML += `<div class="message user-msg">${userText}</div>`;
-    inputField.value = ""; // Clear the input box
+    inputField.value = "";
 
-    // Create a temporary "Loading" message for the bot
+    // 2. Create Bot Placeholder
     const botDiv = document.createElement('div');
     botDiv.className = "message bot-msg";
-    botDiv.innerText = "LISA IS THINKING...";
+    botDiv.innerText = "LISA is connecting...";
     container.appendChild(botDiv);
-    
-    // Auto-scroll to the bottom
     container.scrollTop = container.scrollHeight;
 
     try {
-        const result = await model.generateContent(userText);
-        const response = await result.response;
-        const fullText = response.text();
+        // 3. THE DIRECT API CALL (Bypasses the SDK)
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                contents: [{
+                    parts: [{ text: `You are LISA, the LBSITW Student Assistant. Keep it short and helpful. User asks: ${userText}` }]
+                }]
+            })
+        });
+
+        const data = await response.json();
+
+        // 4. Check if Google sent an error back in the JSON
+        if (data.error) {
+            botDiv.innerText = "GOOGLE ERROR: " + data.error.message;
+            return;
+        }
+
+        const botResponse = data.candidates[0].content.parts[0].text;
         
-        // Remove the "Thinking..." text and start typewriter
+        // 5. Typewriter Effect
         botDiv.innerText = "";
         let i = 0;
         function typeWriter() {
-            if (i < fullText.length) {
-                botDiv.innerText += fullText.charAt(i);
+            if (i < botResponse.length) {
+                botDiv.innerText += botResponse.charAt(i);
                 i++;
-                setTimeout(typeWriter, 15); // Adjust speed here (lower = faster)
+                setTimeout(typeWriter, 20);
                 container.scrollTop = container.scrollHeight;
             }
         }
         typeWriter();
 
-    } catch (error) {
-        botDiv.innerText = "ERROR: Connection to LISA's core failed. Check your API key or Internet.";
-        console.error(error);
+    } catch (err) {
+        botDiv.innerText = "CONNECTION ERROR: Check your internet or Hotspot.";
+        console.error(err);
     }
 }
