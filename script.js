@@ -20,7 +20,8 @@ window.sendMessage = async function() {
 
     try {
         // 3. THE DIRECT API CALL (Bypasses the SDK)
-        const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?
+        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`;
+        const response = await fetch(url, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -31,7 +32,6 @@ window.sendMessage = async function() {
                 }]
             })
         });
-
         const data = await response.json();
 
         // 4. Check if Google sent an error back in the JSON
