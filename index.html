@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LISA | LBS Institute Student Assistant</title>
+    <style>
+        body { 
+            background-color: #0b0e14; 
+            color: #00ffcc; 
+            font-family: 'Segoe UI', sans-serif; 
+            display: flex; flex-direction: column; height: 100vh; margin: 0; 
+        }
+        header { 
+            background: #1a1f29; 
+            border-bottom: 2px solid #00ffcc; 
+            padding: 20px; text-align: center; 
+            font-weight: bold; font-size: 1.2rem; letter-spacing: 2px;
+        }
+        #chat-container { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; }
+        .message { padding: 12px 18px; border-radius: 10px; max-width: 85%; line-height: 1.5; }
+        .bot-msg { background: #1a1f29; color: #00ffcc; border: 1px solid #00ffcc; align-self: flex-start; box-shadow: 0 0 10px rgba(0, 255, 204, 0.1); }
+        .user-msg { background: #00ffcc; color: #0b0e14; align-self: flex-end; font-weight: bold; }
+        .input-area { padding: 20px; background: #1a1f29; display: flex; gap: 10px; border-top: 1px solid #333; }
+        input { flex: 1; background: #0b0e14; border: 1px solid #00ffcc; color: white; padding: 12px; border-radius: 5px; outline: none; }
+        button { background: #00ffcc; color: #0b0e14; border: none; padding: 10px 25px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<header>🤖 LISA: LBS Institute Student Assistant 🤖</header>
+
+<div id="chat-container">
+    <div class="message bot-msg">SYSTEM ONLINE. I am LISA. My database is initialized for LBSITW Poojappura. How can I assist you today, student?</div>
+</div>
+
+<div class="input-area">
+    <input type="text" id="userInput" placeholder="Ask LISA about labs, clubs, or faculty...">
+    <button onclick="sendMessage()">QUERY</button>
+</div>
+
+<script type="module">
+    import { GoogleGenerativeAI } from "https://esm.run/@google/generative-ai";
+
+    const API_KEY = "YOUR_GEMINI_API_KEY_HERE"; 
+    const genAI = new GoogleGenerativeAI(API_KEY);
+
+    const model = genAI.getGenerativeModel({ 
+        model: "gemini-1.5-flash",
+        systemInstruction: `You are LISA (LBS Institute Student Assistant), a sophisticated AI guide for the LBS Institute of Technology for Women, Poojappura. 
+        Your mission is to help first-year students navigate the campus, find labs, identify faculty, and learn about clubs.
+        TONE: Precise, high-tech, and helpful. 
+        CAMPUS CONTEXT: LBSITW is a premier women's engineering college. You know about departments like CSE, IT, ECE, AEI, and Civil.
+        When answering, provide specific directions if known (e.g., 'Main Block, 2nd Floor').`
+    });
+
+    window.sendMessage = async function() {
+        const inputField = document.getElementById('userInput');
+        const container = document.getElementById('chat-container');
+        const userText = inputField.value;
+        if (!userText) return;
+
+        container.innerHTML += `<div class="message user-msg">${userText}</div>`;
+        inputField.value = "";
+
+        const botDiv = document.createElement('div');
+        botDiv.className = "message bot-msg";
+        botDiv.innerText = "ACCESSING DATABASE...";
+        container.appendChild(botDiv);
+        container.scrollTop = container.scrollHeight;
+
+        try {
+            const result = await model.generateContent(userText);
+            const response = await result.response;
+            const fullText = response.text();
+            
+            botDiv.innerText = "";
+            let i = 0;
+            function typeWriter() {
+                if (i < fullText.length) {
+                    botDiv.innerText += fullText.charAt(i);
+                    i++;
+                    setTimeout(typeWriter, 15);
+                    container.scrollTop = container.scrollHeight;
+                }
+            }
+            typeWriter();
+        } catch (error) {
+            botDiv.innerText = "ERROR: Connection timeout. Verify API key.";
+        }
+    }
+</script>
+<script type="module" src="script.js"></script>
+</body>
+</html>
