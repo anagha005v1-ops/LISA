@@ -1,4 +1,4 @@
-const API_KEY = "AIzaSyCutWOFETQ_8C18OXKSU6e0ki-JnlyIpL8"; // Put your new key here
+const API_KEY = "AIzaSyAtm42OTuqpBzwaewan8Ylvejshj40q5GY"; // Put your new key here
 
 window.sendMessage = async function() {
     const inputField = document.getElementById('userInput');
