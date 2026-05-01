@@ -1,4 +1,4 @@
-const API_KEY = "AIzaSyAtm42OTuqpBzwaewan8Ylvejshj40q5GY"; // Put your new key here
+const API_KEY = "AIzaSyChiqrWH21aqGLD9qu-MBUjRM-Q4TD4h20"; // ⚠️ KEEP THIS RESTRICTED
 
 window.sendMessage = async function() {
     const inputField = document.getElementById('userInput');
@@ -19,8 +19,13 @@ window.sendMessage = async function() {
     container.scrollTop = container.scrollHeight;
 
     try {
-        // 3. THE DIRECT API CALL (Bypasses the SDK)
-        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${API_KEY}`;
+        if (API_KEY === "YOUR_NEW_API_KEY_HERE") {
+            botDiv.innerText = "SYSTEM ERROR: API Key is missing. Please add your key to script.js.";
+            return;
+        }
+
+        // 3. THE DIRECT API CALL (Upgraded to gemini-1.5-flash)
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
         const response = await fetch(url, {
             method: "POST",
             headers: {
