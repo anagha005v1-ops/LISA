@@ -48,11 +48,11 @@ window.sendMessage = async function() {
         const botResponse = data.candidates[0].content.parts[0].text;
         
         // 5. Typewriter Effect
-        botDiv.innerText = "";
+        botDiv.textContent = "";
         let i = 0;
         function typeWriter() {
             if (i < botResponse.length) {
-                botDiv.innerText += botResponse.charAt(i);
+                botDiv.textContent += botResponse.charAt(i);
                 i++;
                 setTimeout(typeWriter, 20);
                 container.scrollTop = container.scrollHeight;
