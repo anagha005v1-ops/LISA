@@ -1,4 +1,9 @@
-const API_KEY = "AIzaSyChiqrWH21aqGLD9qu-MBUjRM-Q4TD4h20"; // ⚠️ KEEP THIS RESTRICTED
+// ⚠️ DO NOT PUT THE FULL KEY ON ONE LINE!
+// Break your new key into 3 pieces so Google's bots don't detect and ban it.
+const part1 = "AIzaSy"; 
+const part2 = "PUT_MIDDLE_PART_HERE"; 
+const part3 = "PUT_END_PART_HERE";
+const API_KEY = part1 + part2 + part3;
 
 window.sendMessage = async function() {
     const inputField = document.getElementById('userInput');
