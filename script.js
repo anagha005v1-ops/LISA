@@ -24,8 +24,8 @@ window.sendMessage = async function() {
             return;
         }
 
-        // 3. THE DIRECT API CALL (Upgraded to gemini-1.5-flash)
-        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+        // 3. THE DIRECT API CALL (Upgraded to gemini-2.5-flash)
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
         const response = await fetch(url, {
             method: "POST",
             headers: {
